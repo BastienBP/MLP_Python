@@ -11,31 +11,33 @@ from colorama import Fore
 
 class MLP(object):
     def __init__(self, nbr_inputs, nbr_hidden, nbr_outputs, learning_rate, epochs):
-        random.seed(1)
-        init(autoreset=True)
-        self.nbr_inputs = nbr_inputs + 1
+        random.seed(1) #Create a seed for random number generation
+        init(autoreset=True) #initialize Colorama and reset color after each print
+        self.nbr_inputs = nbr_inputs + 1 #add bias
         self.nbr_hidden = nbr_hidden
         self.nbr_outputs = nbr_outputs
-
+        #store values of each layer
         self.array_of_input = self.nbr_inputs * [1.0]
         self.array_of_hidden = self.nbr_hidden * [1.0]
         self.array_of_output = self.nbr_outputs * [1.0]
 
         self.learning_rate = learning_rate
         self.epochs = epochs
-
+        
         self.initialize_random_weight()
-
-        self.change_inputs = np.zeros((self.nbr_inputs, self.nbr_hidden))
+        
+        self.change_inputs = np.zeros((self.nbr_inputs, self.nbr_hidden))#temporary matrix to store incoming change in weight
         self.change_output = np.zeros((self.nbr_hidden, self.nbr_outputs))
         self.print_mlp_struct()
         self.start_time = time.time()
 
+    #to do add tanh() function
     @staticmethod
     def sigmoid(x):
         return 1 / (1 + np.exp(-x))
 
     @staticmethod
+    #derivate of sigmoid
     def d_sigmoid(x):
         return x * (1 - x)
 
@@ -49,8 +51,8 @@ class MLP(object):
         print(Fore.YELLOW + "#########################")
 
     def initialize_random_weight(self):
-        self.input_hidden_weight = np.random.randn(self.nbr_inputs, self.nbr_hidden)
-        self.hidden_output_weight = np.random.randn(self.nbr_hidden, self.nbr_outputs)
+        self.input_hidden_weight = np.random.randn(self.nbr_inputs, self.nbr_hidden) #weights between input layer and hidden layer
+        self.hidden_output_weight = np.random.randn(self.nbr_hidden, self.nbr_outputs) #weights between hidden layer and output layer
 
     def feed_forward(self, inputs):
         if len(inputs) == self.nbr_inputs - 1:
@@ -111,7 +113,8 @@ class MLP(object):
             bar.finish()
         print(Fore.GREEN + "Training Finished in " + str(time.time() - self.start_time) + " sec")
         self.plot_errors(error_per_epoch)
-
+        
+    #show a graph of error per iteration
     def plot_errors(self, errors):
         x = []
         for i in range(self.epochs):
@@ -125,12 +128,16 @@ class MLP(object):
             predictions.append(self.feed_forward(d))
         return predictions
 
+    #load sklearn digits dataset in array 
     def load_my_dataset(self, file_path, _delimiter):
         dataset = np.loadtxt(file_path, delimiter=_delimiter)
-        y = dataset[:,0:10]
-        dataset = dataset[:,10:]
+        y = dataset[:,0:10] #extract target values
+        dataset = dataset[:,10:] #extract inputs
+        
+        #Normalize data
         dataset -= dataset.min()
         dataset /= dataset.max()
+        
         out = []
         for i in range(dataset.shape[0]):
             exemples = list((dataset[i,:].tolist(), y[i].tolist()))
