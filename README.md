@@ -11,7 +11,7 @@ script a lancer en ligne de commande
   * -e, --epochs: number of iteration
   * --help: print usage
 
-exemple: python MLP2.py -f dataset.csv -i 64 -h 100 -o 10 -lrate 0.01 -e 20000
+exemple: python MLP2.py -f dataset.csv -i 64 -h 100 -o 10 --lrate 0.01 -e 20000
 
 ## Dependances
 
